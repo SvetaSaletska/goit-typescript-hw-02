@@ -1,4 +1,27 @@
 .contact_list {
-  width: 300px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
   list-style: none;
+}
+
+.item {
+  display: flex;
+  width: 250px;
+  border: 1px solid gray;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  padding: 10px;
+}
+
+.button {
+  width: 80px;
+  height: 30px;
+  text-align: center;
+  margin-right: 0;
+  margin-left: auto;
+  border: 1px solid gray;
+  padding: 4px;
+  margin-top: auto;
+  margin-bottom: auto;
 }
