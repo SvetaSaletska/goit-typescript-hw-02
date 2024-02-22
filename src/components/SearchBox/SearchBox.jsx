@@ -5,7 +5,7 @@ export const SearchBox = ({ value, onChange }) => {
   const filterID = useId();
   return (
     <div className={css.filter}>
-      <label id={filterID}>Find contacts by name</label>
+      <label htmlFor={filterID}>Find contacts by name</label>
       <input id={filterID} type="text" value={value} onChange={onChange} />
     </div>
   );
