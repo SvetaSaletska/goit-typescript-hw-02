@@ -1,13 +1,7 @@
 import { FaPhone, FaUser } from 'react-icons/fa6';
 import css from '../Contact/Contact.module.css';
 
-export const Contact = ({ items: { name, number, id }, setContacts }) => {
-  const deleteContact = userId => {
-    setContacts(prevContacts => {
-      return prevContacts.filter(contact => contact.id !== userId);
-    });
-  };
-
+export const Contact = ({ items: { name, number, id }, onDelete }) => {
   return (
     <div className={css.item}>
       <div className={css.text}>
@@ -20,7 +14,7 @@ export const Contact = ({ items: { name, number, id }, setContacts }) => {
           <span className={css.description}>{number}</span>
         </p>
       </div>
-      <button className={css.button} onClick={() => deleteContact(id)}>
+      <button className={css.button} onClick={() => onDelete(id)}>
         Delete
       </button>
     </div>

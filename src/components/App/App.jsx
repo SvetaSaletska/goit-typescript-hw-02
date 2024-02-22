@@ -30,6 +30,11 @@ export const App = () => {
     });
   };
 
+  const deleteContact = userId => {
+    setContacts(prevContacts => {
+      return prevContacts.filter(contact => contact.id !== userId);
+    });
+  };
   const onChange = evt => {
     setNameFilter(evt.target.value);
   };
@@ -44,7 +49,7 @@ export const App = () => {
         <h1 className={css.title}>Phonebook</h1>
         <ContactForm onAdd={addContact} />
         <SearchBox value={nameFilter} onChange={onChange} />
-        <ContactList items={visibleContacts} setContacts={setContacts} />
+        <ContactList items={visibleContacts} onDelete={deleteContact} />
       </div>
     </>
   );
