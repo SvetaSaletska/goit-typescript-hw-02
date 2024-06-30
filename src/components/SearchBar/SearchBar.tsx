@@ -41,6 +41,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
             placeholder="Search images and photos"
           />
           <button type="submit" className={css.btn}>
+            ;
             <CiSearch className={css.icon} />
           </button>
         </div>
