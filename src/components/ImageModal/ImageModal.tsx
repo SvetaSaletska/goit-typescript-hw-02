@@ -24,7 +24,7 @@ export const ImageModal: React.FC<ImageModalProps> = ({ onClose, card }) => {
   return (
     <div>
       <Modal
-        isOpen={card}
+        isOpen={true}
         onRequestClose={onClose}
         style={customStyles}
         contentLabel="Example Modal"
