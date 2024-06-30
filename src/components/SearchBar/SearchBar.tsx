@@ -1,4 +1,3 @@
-import React, { FormEvent } from 'react';
 import css from '../SearchBar/SearchBar.module.css';
 import { CiSearch } from 'react-icons/ci';
 import toast from 'react-hot-toast';
@@ -8,19 +7,25 @@ interface SearchBarProps {
 }
 
 export const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
 
-    const form = e.target as HTMLFormElement;
-    const data = form.elements.namedItem('topic') as HTMLFormElement;
+    const target = e.target as typeof e.target & {
+      elements: {
+        query: { value: string };
+      };
+      reset: () => void;
+    };
 
-    if (data.value.trim() === '') {
+    const inputValue = target.elements.query.value.trim();
+
+    if (inputValue === '') {
       toast.error('EMPTY STRING');
       return;
     }
 
-    onSearch(data.value.trim());
-    form.reset();
+    onSearch(inputValue);
+    target.reset();
   };
 
   return (

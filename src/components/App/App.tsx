@@ -10,13 +10,15 @@ import { ImageModal } from '../ImageModal/ImageModal';
 import { Toaster } from 'react-hot-toast';
 import { Image } from '../types';
 
-export const App: React.FC = () => {
+interface AppProps {}
+
+export const App: React.FC<AppProps> = () => {
   const [query, setQuery] = useState<string>('');
   const [page, setPage] = useState<number>(1);
   const [images, setImages] = useState<Image[]>([]);
   const [error, setError] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  const [selectedCard, setSelectedcard] = useState<Image | null>(null);
+  const [selectedCard, setSelectedCard] = useState<Image | null>(null);
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const searchImages = (newQuery: string): void => {
@@ -58,13 +60,16 @@ export const App: React.FC = () => {
   };
 
   const closeModal = (): void => {
-    setSelectedcard(null);
+    setSelectedCard(null);
     setIsOpen(false);
   };
 
-  const onClickModal = (id: string): void => {
-    setSelectedcard(images.find(item => item.id === id));
-    openModal();
+  const onClickModal = (id: string) => {
+    const clickedCard = images.find(item => item.id === id);
+    if (clickedCard) {
+      setSelectedCard(clickedCard);
+      openModal();
+    }
   };
 
   return (
