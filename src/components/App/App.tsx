@@ -1,56 +1,85 @@
 import { useState, useEffect } from 'react';
-import { ContactList } from '../ContactList/ContactList';
-import { ContactForm } from '../ContactForm/ContactForm';
-import { SearchBox } from '../SearchBox/SearchBox';
-import css from '../App/App.module.css';
+import '../App/App.module.css';
+import { SearchBar } from '../SearchBar/SearchBar';
+import { ImageGallery } from '../ImageGallery/ImageGallery';
+import { Loader } from '../Loader/Loader';
+import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
+import { LoadMoreBtn } from '../LoadMoreBtn/LoadMoreBtn';
+import { fetchImages } from '../articles-api';
+import { ImageModal } from '../ImageModal/ImageModal';
+import { Toaster } from 'react-hot-toast';
+import { Image } from '../types';
 
-export const App = () => {
-  const [nameFilter, setNameFilter] = useState('');
+export const App: React.FC = () => {
+  const [query, setQuery] = useState<string>('');
+  const [page, setPage] = useState<number>(1);
+  const [images, setImages] = useState<Image[]>([]);
+  const [error, setError] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [selectedCard, setSelectedcard] = useState<Image | null>(null);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
-  const [contacts, setContacts] = useState(() => {
-    const savedContact = window.localStorage.getItem('saved-contact');
-    if (savedContact !== null) {
-      return JSON.parse(savedContact);
-    }
-    return [
-      { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
-      { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
-      { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
-      { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
-    ];
-  });
-
-  const visibleContacts = contacts.filter(contact =>
-    contact.name.toLowerCase().includes(nameFilter.toLowerCase()),
-  );
-
-  const addContact = newContact => {
-    setContacts(prevContacts => {
-      return [...prevContacts, newContact];
-    });
+  const searchImages = (newQuery: string): void => {
+    setQuery(newQuery);
+    setImages([]);
+    setPage(1);
   };
 
-  const deleteContact = userId => {
-    setContacts(prevContacts => {
-      return prevContacts.filter(contact => contact.id !== userId);
-    });
-  };
-  const onChange = evt => {
-    setNameFilter(evt.target.value);
+  const handleLoadMore = (): void => {
+    setPage(page + 1);
   };
 
   useEffect(() => {
-    window.localStorage.setItem('saved-contact', JSON.stringify(contacts));
-  }, [contacts]);
+    if (query === '') {
+      return;
+    }
+
+    async function getImages() {
+      try {
+        setError(false);
+        setLoading(true);
+
+        const data: Image[] = await fetchImages(query, page);
+        console.log(data);
+        setImages(prevImages => {
+          return [...prevImages, ...data];
+        });
+      } catch (error) {
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
+    }
+    getImages();
+  }, [query, page]);
+
+  const openModal = (): void => {
+    setIsOpen(true);
+  };
+
+  const closeModal = (): void => {
+    setSelectedcard(null);
+    setIsOpen(false);
+  };
+
+  const onClickModal = (id: string): void => {
+    setSelectedcard(images.find(item => item.id === id));
+    openModal();
+  };
 
   return (
-    <>
-      <div>
-        <h1 className={css.title}>Phonebook</h1>
-        <ContactForm onAdd={addContact} />
-        <SearchBox value={nameFilter} onChange={onChange} />
-        <ContactList items={visibleContacts} onDelete={deleteContact} />
-      </div>
-    </>
+    <div>
+      <SearchBar onSearch={searchImages} />
+      {error && <ErrorMessage />}
+      {loading && <Loader />}
+      <ImageGallery items={images} onSelectedcard={onClickModal} />
+      {isOpen && selectedCard && (
+        <ImageModal card={selectedCard} onClose={closeModal} />
+      )}
+      {images.length > 0 && !loading && (
+        <LoadMoreBtn onClick={handleLoadMore} />
+      )}
+      <Toaster />
+    </div>
   );
 };
