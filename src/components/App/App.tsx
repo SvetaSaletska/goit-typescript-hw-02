@@ -41,7 +41,7 @@ export const App: React.FC<AppProps> = () => {
         setError(false);
         setLoading(true);
 
-        const data: Image[] = await fetchImages(query, page);
+        const data = await fetchImages(query, page);
         console.log(data);
         setImages(prevImages => {
           return [...prevImages, ...data];
